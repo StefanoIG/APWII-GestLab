@@ -137,7 +137,7 @@ public function extenderReserva(Request $request, Reserva $reserva)
         
             "observaciones_admin": "Aprobado. Por favor, cuidar los equipos."
         
-        } todoora 
+        }  
         $reserva->save();
         // TODO: Enviar email de confirmación de extensión al profesor actual
         return response()->json(['message' => 'Reserva extendida exitosamente.']);
