@@ -5,7 +5,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Reserva;
 use App\Http\Requests\StoreReservaRequest;
 use App\Http\Requests\UpdateReservaRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Events\ReservaCreada;
 use App\Events\ReservaEstadoActualizado;
 class ReservaController extends Controller
@@ -131,13 +133,7 @@ public function extenderReserva(Request $request, Reserva $reserva)
 
     // CASO 1: No hay ningún conflicto. ¡Vía libre!
     if (!$reservaConflictiva) {
-        $reserva->hora_fin = $nuevaHoraFin;dame dadame de nuevo ahDame ahora de nuevo{
-
-            "estado": "aprobada",
-        
-            "observaciones_admin": "Aprobado. Por favor, cuidar los equipos."
-        
-        }  
+        $reserva->hora_fin = $nuevaHoraFin;
         $reserva->save();
         // TODO: Enviar email de confirmación de extensión al profesor actual
         return response()->json(['message' => 'Reserva extendida exitosamente.']);
