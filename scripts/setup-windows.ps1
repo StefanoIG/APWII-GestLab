@@ -56,7 +56,7 @@ if ($executionPolicy -eq "Restricted") {
 
 Write-Host "`n🚀 Configuración completada!" -ForegroundColor Green
 Write-Host "`n📋 Próximos pasos:" -ForegroundColor Cyan
-Write-Host "   1. Ejecuta: .\scripts\gestlab-docker.ps1 build" -ForegroundColor White
+Write-Host "   1. Ejecuta: .\scripts\gestlab-3containers.ps1 build" -ForegroundColor White
 Write-Host "   2. Espera a que se construyan los contenedores" -ForegroundColor White
 Write-Host "   3. Accede a: http://localhost:8000" -ForegroundColor White
 Write-Host "   4. phpMyAdmin: http://localhost:8080" -ForegroundColor White
@@ -65,6 +65,12 @@ Write-Host "`n🔗 Enlaces útiles:" -ForegroundColor Cyan
 Write-Host "   Aplicación: http://localhost:8000" -ForegroundColor Gray
 Write-Host "   phpMyAdmin: http://localhost:8080" -ForegroundColor Gray
 Write-Host "   Backups: $backupDir" -ForegroundColor Gray
+Write-Host "   Base de Datos: C:\gestlab-db" -ForegroundColor Gray
 
-Write-Host "`n💡 Ayuda:" -ForegroundColor Cyan
-Write-Host "   .\scripts\gestlab-docker.ps1 -Command help" -ForegroundColor Gray
+Write-Host "`n💡 Comandos disponibles:" -ForegroundColor Cyan
+Write-Host "   .\scripts\gestlab-3containers.ps1 build      # Construir todo" -ForegroundColor Gray
+Write-Host "   .\scripts\gestlab-3containers.ps1 start      # Iniciar contenedores" -ForegroundColor Gray
+Write-Host "   .\scripts\gestlab-3containers.ps1 stop       # Detener contenedores" -ForegroundColor Gray
+Write-Host "   .\scripts\gestlab-3containers.ps1 status     # Ver estado" -ForegroundColor Gray
+Write-Host "   .\scripts\gestlab-3containers.ps1 logs       # Ver logs" -ForegroundColor Gray
+Write-Host "   .\scripts\gestlab-3containers.ps1 clean      # Limpiar todo" -ForegroundColor Gray
