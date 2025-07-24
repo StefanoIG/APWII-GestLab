@@ -1,0 +1,65 @@
+services:
+  # Laravel Application (PHP-FPM)
+  gestlab-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestlab-app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+      - c:\backup:/backup
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=mysql
+      - DB_HOST=gestlab-db
+      - DB_PORT=3306
+      - DB_DATABASE=gestlab
+      - DB_USERNAME=gestlab_user
+      - DB_PASSWORD=gestlab_password
+    networks:
+      - gestlab-network
+    # Comentamos depends_on porque gestlab-db está en otro compose
+    # depends_on:
+    #   - gestlab-db
+
+  # Nginx Web Server
+  gestlab-nginx:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nginx
+    container_name: gestlab-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/logs:/var/log/nginx
+    networks:
+      - gestlab-network
+    depends_on:
+      - gestlab-app
+
+  # phpMyAdmin (opcional para administración)
+  gestlab-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: gestlab-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: gestlab-db
+      PMA_USER: gestlab_user
+      PMA_PASSWORD: gestlab_password
+    networks:
+      - gestlab-network
+    # Comentamos depends_on porque gestlab-db está en otro compose
+    # depends_on:
+    #   - gestlab-db
+
+networks:
+  gestlab-network:
+    external: true

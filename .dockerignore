@@ -1,0 +1,65 @@
+# Git
+.git
+.gitignore
+
+# Logs
+storage/logs/*
+!storage/logs/.gitkeep
+docker/logs/*
+
+# Cache
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Node modules
+node_modules
+npm-debug.log
+
+# Environment files
+.env.local
+.env.development
+.env.testing
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation
+README.md
+README-DOCKER.md
+docs/
+
+# Testing
+tests/
+phpunit.xml
+
+# Development tools
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
+
+# Backup files
+*.backup
+*.bak
+
+# Docker files (no necesarios dentro del contenedor)
+docker-compose.yml
+docker-compose.db.yml
+docker-compose.override.yml
+Dockerfile
+docker/Dockerfile.nginx
+.dockerignore
+
+# Scripts
+scripts/
