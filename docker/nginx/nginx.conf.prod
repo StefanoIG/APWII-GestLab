@@ -1,0 +1,136 @@
+user www-data;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log /var/log/nginx/access.log main;
+
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    # Production server configuration
+    server {
+        listen 80;
+        server_name _;
+
+        # Redirect all HTTP traffic to HTTPS
+        return 301 https://$host$request_uri;
+    }
+
+    server {
+        listen 443 ssl http2;
+        server_name _;
+
+        root /var/www/html/public;
+        index index.php index.html;
+
+        # SSL Configuration
+        ssl_certificate /etc/nginx/ssl/cert.pem;
+        ssl_certificate_key /etc/nginx/ssl/key.pem;
+        
+        # SSL Settings
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA;
+        ssl_prefer_server_ciphers on;
+        ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+        
+        # HSTS (HTTP Strict Transport Security)
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+
+        # Increase upload limits for production
+        client_max_body_size 50M;
+
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param HTTPS on;
+            include fastcgi_params;
+            
+            # Production timeout settings
+            fastcgi_read_timeout 300;
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+        }
+
+        # File upload handling with better caching for production
+        location ~* \.(jpg|jpeg|png|gif|ico|pdf|doc|docx|xls|xlsx|ppt|pptx|mp4|mp3|avi|mov)$ {
+            expires 6M;
+            access_log off;
+            add_header Cache-Control "public, immutable";
+            add_header Vary Accept-Encoding;
+            try_files $uri /index.php?$query_string;
+        }
+
+        # Static assets with long caching
+        location ~* \.(css|js|woff|woff2|ttf|svg)$ {
+            expires 1y;
+            access_log off;
+            add_header Cache-Control "public, immutable";
+            add_header Vary Accept-Encoding;
+            
+            # Enable gzip compression
+            gzip on;
+            gzip_vary on;
+            gzip_min_length 1024;
+            gzip_types text/css application/javascript text/javascript application/json;
+        }
+
+        # Block access to sensitive files
+        location ~ /\. {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+
+        location ~ /(storage|bootstrap/cache)/ {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+
+        # Block access to common attack vectors
+        location ~* \.(htaccess|htpasswd|ini|log|sh|sql|conf)$ {
+            deny all;
+            access_log off;
+            log_not_found off;
+        }
+
+        # Robots and favicon
+        location = /robots.txt {
+            access_log off;
+            log_not_found off;
+        }
+
+        location = /favicon.ico {
+            access_log off;
+            log_not_found off;
+        }
+    }
+}

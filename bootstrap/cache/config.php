@@ -8,7 +8,7 @@
     'name' => 'GestLab',
     'env' => 'production',
     'debug' => false,
-    'url' => 'http://localhost:8000',
+    'url' => 'https://localhost:8443',
     'frontend_url' => 'http://localhost:3000',
     'asset_url' => NULL,
     'timezone' => 'UTC',
@@ -378,7 +378,7 @@
       array (
         'driver' => 'local',
         'root' => '/var/www/html/storage/app/public',
-        'url' => 'http://localhost:8000/storage',
+        'url' => 'https://localhost:8443/storage',
         'visibility' => 'public',
         'throw' => false,
         'report' => false,
@@ -404,7 +404,7 @@
   ),
   'jwt' => 
   array (
-    'secret' => 'nmgtr9hJZXj5TNrJFtBSfdUUeVE3XlxkedpxOHq8wmFPCzAMGJFqbRWBRmxcfZnz',
+    'secret' => NULL,
     'keys' => 
     array (
       'public' => NULL,
@@ -602,7 +602,7 @@
     ),
     'from' => 
     array (
-      'address' => 'noreply@gestlab.com',
+      'address' => 'hello@example.com',
       'name' => 'GestLab',
     ),
     'markdown' => 
@@ -683,7 +683,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'localhost:8000',
+      5 => 'localhost:8443',
     ),
     'guard' => 
     array (
@@ -728,7 +728,7 @@
     'driver' => 'database',
     'lifetime' => 120,
     'expire_on_close' => false,
-    'encrypt' => false,
+    'encrypt' => true,
     'files' => '/var/www/html/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
@@ -740,8 +740,8 @@
     ),
     'cookie' => 'gestlab_session',
     'path' => '/',
-    'domain' => NULL,
-    'secure' => NULL,
+    'domain' => 'localhost',
+    'secure' => true,
     'http_only' => true,
     'same_site' => 'lax',
     'partitioned' => false,
